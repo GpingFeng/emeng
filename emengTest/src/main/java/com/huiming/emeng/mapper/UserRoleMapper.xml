@@ -105,17 +105,10 @@
 	<update id="updateUserRole" parameterType="com.huiming.emeng.model.UserRole">
 		update user_role
 		<set>
-			<if test="roleId != null">
-			 role_id = #{roleId,jdbcType=INTEGER}
-			</if>
+			role_id = #{roleId,jdbcType=INTEGER}
 		</set>
-			
-		
 		<where>
-			<if test="userId != null">
 			user_id = #{userId,jdbcType=INTEGER}
-			</if>
-
 		</where>
 	</update>
 </mapper>

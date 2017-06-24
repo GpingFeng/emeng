@@ -1,0 +1,351 @@
+/**
+ * Created by guiliang on 2017/6/14 0014.
+ */
+$(function () {
+    layui.use(['laypage','layer','form'], function() {
+        var laypage = layui.laypage;
+        var layer = layui.layer;
+        var form = layui.form();
+        
+        //ajax获取总页数
+        $.ajax({
+            url: 'videoPage',//请求的url地址
+            dataType: "json",   //返回格式为json
+            async: true, //请求是否异步，默认为异步，这也是ajax重要特性
+            data: {"pageNum": 1 ,"pageSize":10},    //可以不用
+            type: "POST",   //请求方式
+            success: function(data) {
+                //请求成功处理
+                console.log(data.videoList);
+                var vedioL = data.videoList.dataList.length;
+                // console.log(vedioL);
+                pages = vedioL%10==0?vedioL/10:(vedioL/10+1);
+                laypage({
+                    cont: 'page'
+                    ,pages:pages //得到总页数
+                    ,skip:true
+                    ,jump: function (obj) {
+                        laypagesuccess(obj)
+                    }
+                });
+            },
+            error: function(data) { 
+            }
+        });
+
+        //分页跳转函数
+        function  laypagesuccess(obj) {
+        	//obj.curr表示选择的页码*/
+            console.log('当前页:'+obj.curr);
+            //ajax获取视频列表
+            $.ajax({
+                url: "videoPage",    //请求的url地址
+                dataType: "json",   //返回格式为json
+                async: true, //请求是否异步，默认为异步，这也是ajax重要特性
+                data: { "pageNum": obj.curr ,"pageSize":10},    //参数值
+                type: "POST",   //请求方式
+                success: function(data) {
+                    //请求成功时处理
+                    ajaxPageContent(data);
+                },
+                error: function() {
+                    //请求出错处理
+                    pages = data.nums;
+                }
+            });
+        }
+
+        var $my_add = $('.my-add');
+        $my_add.on('click',vedioAdd);
+        
+        //ajax请求视频页函数
+        function ajaxPageContent(data) {
+            //渲染函数（其实应该在success里面）
+
+            var $operation = '<td class="td-manage"><a title="编辑" href="javascript:;" class="my-edit" style="text-decoration:none"><i class="layui-icon" style="margin:0 20px;">&#xe642;</i></a><a title="删除" href="javascript:;"  class="my-delete" style="text-decoration:none"><i class="layui-icon" >&#xe640;</i></a></td>';
+            //渲染数据   
+            var $tbody = $('.iframe-content .layui-table tbody');
+            $tbody.html("");
+            var my_length = data.videoList.dataList.length;
+            $.each(data.videoList.dataList,function (index,element) {
+                var $tr = $('<tr></tr>');
+                $tr.data('ids',element.id);//注意这一行，为下面是传ID，向元素附加数据，然后取回该数据
+                $tr.append("<td class='videoName' style='width: 110px;'>"+element.name+"</td>");
+                $tr.append("<td class='picLink'  style='width: 10em'>"+element.pic+"</td>");
+                $tr.append("<td class='lesson'>"+element.lesson+"</td>");
+                $tr.append("<td class='link'>"+element.link+"</td>");
+                $tr.append($operation);
+                $tbody.append($tr);
+
+                /*每个编辑按钮的注册事件*/
+                var $my_edits = $('.my-edit i');
+
+                if($my_edits.length==my_length){
+                    $my_edits.on('click',vedioEdit)
+                }
+
+                /*每个删除按钮注册事件*/
+                var $my_delete = $('.my-delete');
+                if($my_delete.length==my_length){
+                    $my_delete.on('click',vedioDelete)
+                }
+
+            })
+        }
+
+        // 编辑视频处理函数，点击添加图标的时候触发
+        function vedioEdit() {
+            var id = $(this).parents('tr').data('ids');//点击的时候获得该行ID的值
+            var videoname = $(this).parents('tr').children(".videoName").text();
+            var picLink = $(this).parents('tr').children(".picLink").text();
+            var lesson = $(this).parents('tr').children(".lesson").text();
+            var link = $(this).parents('tr').children(".link").text();
+            
+            layer.open({
+                type: 2,
+                area: ['530px', '530px'],
+                fix: false, //不固定
+                maxmin: true,
+                shadeClose: true,
+                shade:0.4,
+                title: id,
+                offset: '30px',
+                content: 'vedioEdit.html',
+                end: function () {
+                    location.reload();
+                },//请求方式
+                success:function () {
+                    $.ajax({
+                        url: "addvideo",    //请求的url地址
+                        dataType: "json",   //返回格式为json
+                        async: true, //请求是否异步，默认为异步，这也是ajax重要特性
+                        data: {},    //参数值
+                        type: "POST",
+                        success:  function(data) {
+                            //请求成功处理
+                            // $("#layui-layer-iframe1").contents().find("div input.id").val(data.id);
+                            // console.log(data);
+                            console.log("视频名称"+videoname);
+                            console.log("图片链接"+picLink);
+                            console.log("所属课程名称"+lesson);
+                            console.log("视频链接"+link);
+                            $("#layui-layer-iframe1").contents().find("div input.name").val(videoname);
+                            $("#layui-layer-iframe1").contents().find("div input.link").val(link);
+                            $("#layui-layer-iframe1").contents().find("#preview").attr("src",picLink);
+                            // $("#layui-layer-iframe1").contents().find("div input.link").val(data.link);
+
+                            //lesson和chapter比较特别
+                            // $.ajax({
+                            //     url: "selectlession",    //请求的url地址
+                            //     dataType: "json",   //返回格式为json
+                            //     async: true, //请求是否异步，默认为异步，这也是ajax重要特性
+                            //     data: { lessonId（string）参数一},    //参数值
+                            //     type: "POST",
+                            //     success:function(){
+
+                            //     },
+                            //     error:function(){
+
+                            //     }
+                            // )};
+                            $.each(data.lessionlist,function (index,element) {
+                                $("#layui-layer-iframe1").contents().find("#lessonSelect").append('<option value='+element.id+'>'+element.name+'</option>');
+                            });
+
+                            $("#layui-layer-iframe1").contents().find("#lessonSelect").change(function(){
+                                // var options = $("#layui-layer-iframe1").contents().find("#lessonSelect option:selected");
+                                 var lessonId = $("#layui-layer-iframe1").contents().find("#lessonSelect option:selected").val();
+                                 console.log(lessonId);
+
+                                 $("#layui-layer-iframe1").contents().find("#chapterSelect option").remove();
+                                 // var lessonval = $("#layui-layer-iframe1").contents().find("#lessonSelect option:selected").val();
+                                    $.ajax({     
+                                        url: "selectlession",
+                                        type: "POST",
+                                        dataType: "json",
+                                        data:{"lessonId":lessonId},
+                                        // {"chapters":[{"id":3,"lesson":2,"name":"章节2","number":0},{"id":2,"lesson":2,"name":"章节1","number":1},{"id":1,"lesson":2,"name":"章节0","number":12}]}
+                                        success: function (data) {
+                                           $.each(data.chapters,function (index,element) {
+                                                $("#layui-layer-iframe1").contents().find("#chapterSelect").append('<option value='+element.id+'>'+element.name+'</option>');
+                                            });
+                                        }
+                                    });
+                            });
+            
+                            //提交之后的处理
+                            $("#layui-layer-iframe1").contents().find("#videoInfoform").on('submit',function (e) {
+                                // //取得修改后的值
+                                var afterName = $("#layui-layer-iframe1").contents().find("div input.name").val();
+                                var afterPic = $("#layui-layer-iframe1").contents().find("div #preview").attr("src");
+                                var afterLink = $("#layui-layer-iframe1").contents().find("div input.link").val();
+                                var afterLesson = $("#layui-layer-iframe1").contents().find("#lessonSelect option:selected").val();
+                                var afterChapter = $("#layui-layer-iframe1").contents().find("#lessonSelect option:selected").val();
+                                
+                                // console.log("zhende");
+                                console.log(afterPic);
+                                console.log(afterChapter);
+                                console.log(afterLink);
+                                console.log(afterLesson);
+                                $.ajax({
+                                    url: "videoupdByPK",    //请求的url地址
+                                    dataType: "json",  //返回格式为json
+                                    async: true, //请求是否异步，默认为异步，这也是ajax重要特性
+                                    // {"id":30,"name":"30","pic":"30","link":"30","lesson":0,"chapter":0}
+                                    data :{'name':afterName,'pic':afterPic,'link':afterLink,'lesson':afterLesson,'chapter':afterChapter,'pageNum':1,'pageSize':10},
+                                    type: "POST",   //请求方式
+                                    success: function() {
+                                        //请求成功处理
+                                        layer.alert("添加成功", {icon: 6},function(index){
+                                            layer.closeAll();
+                                        });
+                                    },
+                                    error: function(data) {
+                                        //请求出错时处理
+                                       layer.alert('错误了哦！');
+                                    }
+                                });
+                                return false;
+                            });
+                        },
+                        error: function(data) {
+                            //请求出错时处理
+                            layer.alert('错误了哦！');
+                         }
+                    });
+                }
+        });
+    }
+
+            //增加视频信息函数
+           function vedioAdd() {
+            var id = $(this).parents('tr').data('ids');
+            layer.open({
+                type: 2,
+                area: ['530px', '530px'],
+                fix: false, //不固定
+                maxmin: true,
+                shadeClose: true,
+                shade:0.4,
+                title: id,
+                offset: '30px',
+                content: 'vedioEdit.html',
+                end: function () {
+                    location.reload();
+                },//请求方式
+                success:function () {
+                    $.ajax({
+                        url: "addvideo",    //请求的url地址
+                        dataType: "json",   //返回格式为json
+                        async: true, //请求是否异步，默认为异步，这也是ajax重要特性
+                        // data: {},    //参数值
+                        type: "POST",
+                        success: function(data) {
+                            //请求成功时处理
+                            $.each(data.lessionlist,function (index,element) {
+                                $("#layui-layer-iframe1").contents().find("#lessonSelect").append('<option value='+element.id+'>'+element.name+'</option>');
+                            });
+
+                            $("#layui-layer-iframe1").contents().find("#lessonSelect").change(function(){
+                                // var options = $("#layui-layer-iframe1").contents().find("#lessonSelect option:selected");
+                                 var lessonId = $("#layui-layer-iframe1").contents().find("#lessonSelect option:selected").val();
+                                 console.log(lessonId);
+
+                                 $("#layui-layer-iframe1").contents().find("#chapterSelect option").remove();
+                                 // var lessonval = $("#layui-layer-iframe1").contents().find("#lessonSelect option:selected").val();
+                                    $.ajax({     
+                                        url: "selectlession",
+                                        type: "POST",
+                                        dataType: "json",
+                                        data:{"lessonId":lessonId},
+                                        // {"chapters":[{"id":3,"lesson":2,"name":"章节2","number":0},{"id":2,"lesson":2,"name":"章节1","number":1},{"id":1,"lesson":2,"name":"章节0","number":12}]}
+                                        success: function (data) {
+                                           $.each(data.chapters,function (index,element) {
+                                                $("#layui-layer-iframe1").contents().find("#chapterSelect").append('<option value='+element.id+'>'+element.name+'</option>');
+                                            });
+                                        }
+                                    });
+                            });
+
+                            //点击提交按钮触发
+                            $("#layui-layer-iframe1").contents().find("#videoInfoform").on('submit',function (e) {
+                                //取得修改后的内容
+                                var afterName = $("#layui-layer-iframe1").contents().find("div input.name").val();
+                                var afterPic = $("#layui-layer-iframe1").contents().find("div #preview").attr("src");
+                                var afterLink = $("#layui-layer-iframe1").contents().find("div input.link").val();
+                                var afterLesson = $("#layui-layer-iframe1").contents().find("#lessonSelect option:selected").val();
+                                var afterChapter = $("#layui-layer-iframe1").contents().find("#lessonSelect option:selected").val();
+                                 //把投稿数据传到后台
+                                 console.log(afterName);
+                                 console.log(afterLink);
+                                 console.log(afterPic);
+                                 console.log(afterLesson);
+                                 console.log(afterChapter);
+
+
+                                $.ajax({
+                                    url: "videoinsert",    //请求的url地址
+                                    dataType: "json",  //返回格式为json
+                                    async: true, //请求是否异步，默认为异步，这也是ajax重要特性
+                                    // {"id":30,"name":"30","pic":"30","link":"30","lesson":0,"chapter":0}
+                                    data :{'name':afterName,'pic':afterPic,'link':'afterLink','lesso_id':afterLesson,'chapter':afterChapter},
+                                    type: "POST",   //请求方式
+                                    success: function() {
+                                        // layer.close(layer.index);//先关闭当前窗口
+                                        //请求成功处理
+                                        layer.alert("添加成功", {icon: 6},function(index){
+                                            layer.closeAll();
+                                        });
+                                    },
+                                    error: function(data) {
+                                        //请求出错时处理
+                                       layer.alert('错误了哦！');
+                                    }
+                                });
+                                return false;
+                            })
+
+                        },
+                        error: function() {
+            //请求出错处理
+                  
+                        }
+                    });
+                }
+            });
+
+
+        }
+
+        /* 删除处理函数*/
+        function vedioDelete() {
+            var id = $(this).parents('tr').data('ids');
+            /*删除某篇投稿ajax及接口*/
+            layer.confirm('确认要删除吗？',function(index){
+                // alert("真的有删除？");
+                //捉到被选中的，发异步进行删除
+                $.ajax({
+                    url: "videodelByPK",    //请求的url地址
+                    dataType: "json",   //返回格式为json
+                    async: true, //请求是否异步，默认为异步，这也是ajax重要特性
+                    data: { "id": id },    //参数值 可能不用
+                    type: "POST",   //请求方式
+                    success: function(data) {
+                        //请求成功时处理
+                        layer.msg('删除成功', {icon: 1});
+                        console.log('删除的文章id:'+id)
+                        window.location.reload();
+                    },
+                    error: function() {
+                        //请求出错处理
+                       
+                    }
+                });
+            });
+        }
+    });
+
+})
+
+
+

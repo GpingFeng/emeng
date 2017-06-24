@@ -121,14 +121,20 @@ public class UserController {
 	@RequestMapping("/findUser")
 	@MappingDescription("根据信息查询用户")
 	@ResponseBody
-	public Pager<UserWithRole> findUser(User user, ModelMap modelMap, Integer currentPage, Integer pageSize) {
-		return getUserWithRole(userService.selectAllSelective(user, currentPage, pageSize));
+	public Object findUser(User user, ModelMap modelMap, Integer currentPage, Integer pageSize) {
+		UserWithRole temp = new UserWithRole();
+		temp.setUser(userService.selectSelective(user));
+		temp.setRole(userService.getUserRole(user.getId()));
+		temp.setSchool(schoolService.selectByPrimaryKey(user.getSchoolId()));
+		System.out.println(temp);
+		return JSON.toJSON(temp);
 	}
 
 	@RequestMapping("/getAllUser")
 	@MappingDescription("分页获取用户信息以及角色")
 	@ResponseBody
 	public Object getAllUser(ModelMap modelMap, Integer currentPage, Integer pageSize) {
+		System.out.println("getAllUser");
 		modelMap.put("userList", getUserWithRole(userService.selectAllUser(currentPage,pageSize)));
 		return JSON.toJSON(modelMap);
 	}

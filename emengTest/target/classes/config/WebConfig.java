@@ -37,7 +37,7 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 @ComponentScan(basePackages={ "com.huiming.emeng.controller"},
 		includeFilters={@Filter(type = FilterType.ANNOTATION, value = Controller.class)})
 @PropertySource("classpath:application.properties")
-//@ImportResource("classpath:application.xml")
+@ImportResource("classpath:application.xml")
 public class WebConfig extends WebMvcConfigurerAdapter {
 	
 	/**
@@ -48,8 +48,8 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 	@Bean
 	public ViewResolver viewResolver() {
 		InternalResourceViewResolver resolver = new InternalResourceViewResolver();
-		resolver.setPrefix("/WEB-INF/jsp/");
-		resolver.setSuffix(".jsp");
+		resolver.setPrefix("");
+		resolver.setSuffix(".html");
 		resolver.setViewClass(org.springframework.web.servlet.view.JstlView.class);
 		resolver.setExposeContextBeansAsAttributes(true);
 		return resolver;
