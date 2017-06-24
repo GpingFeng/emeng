@@ -146,3 +146,7 @@ td{
 　　overflow: hidden !important;
 　　text-overflow: ellipsis !important;
 }
+
+select{
+    display: block !important;
+}

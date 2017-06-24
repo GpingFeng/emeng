@@ -80,26 +80,23 @@ $(function () {
                     $tr.append("<td>"+user.phone+"</td>");
                     $tr.append($operation);
                     $tbody.append($tr);
-
-                    /*每个编辑按钮的注册事件*/
-                    var $my_edits = $('.my-edit i');
-                    /* alert($my_edits.length);*/
-                    if($my_edits.length==my_length){
-                        $my_edits.on('click',userEdit)
-                    }
-
-                    /*每个删除按钮注册事件*/
-                    var $my_delete = $('.my-delete');
-                    if($my_delete.length==my_length){
-                        $my_delete.on('click',userDelete)
-                    }               
+                               
             }
+            // 每个编辑按钮的注册事件
+            var $my_delete = $('.my-delete');
+            $my_delete.on('click',userDelete);
+            // 每个编辑按钮的注册事件
+            var $my_edits = $('.my-edit i');
+            $my_edits.on('click',userEdit);
         }
+
+
+
 
         // 编辑用户处理函数，点击编辑图标的时候触发
         function userEdit() {
             var id = $(this).parents('tr').data('ids');
-            console.log('用户1:'+id);
+            console.log('用户id:'+id);
             layer.open({
                 type: 2,//基本层类型
                 area: ['530px', '530px'],//宽高
@@ -195,13 +192,13 @@ $(function () {
                                 console.log("修改后Phone"+afterPhone);
                                 console.log("修改后Mail"+afterMail);
                                 console.log("修改后RoleId"+afterRoleId);
-                            // var afterRole = $("#layui-layer-iframe1").contents().find("#schoolSelect").find("option:selected").val();
+                                // var afterRole = $("#layui-layer-iframe1").contents().find("#schoolSelect").find("option:selected").val();
                                 //把投稿数据传到后台
                                 $.ajax({
                                     url: "updateByPrimaryKey",    //请求的url地址
                                     dataType: "json",   //返回格式为json
                                     async: true, //请求是否异步，默认为异步，这也是ajax重要特性
-                                    data :{"id":id,"username":afterUsername,"jobId":afterJob_id,"password":afterPassword,"schoolId":afterSchoolId,"phone":afterPhone,"mail":afterMail},
+                                    data :{"id":id,"username":afterUsername,"jobId":afterJob_id,"password":afterPassword,"schoolId":afterSchoolId,"phone":afterPhone,"mail":afterMail,"roleId":afterRoleId},
                                     type: "POST",   //请求方式
                                     success: function() {
                                         //请求成功处理
