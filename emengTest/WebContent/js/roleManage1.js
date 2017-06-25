@@ -1,13 +1,9 @@
-/**
- * Created by guiliang on 2017/6/14 0014.
- */
+
 $(function () {
     layui.use(['laypage','layer','form'], function() {
         var laypage = layui.laypage;
         var layer = layui.layer;
         var form = layui.form();
-        var nums = 10;  //一页10条
-
 
         //ajax获取总页数,根据不同type获取
         $.ajax({
@@ -30,7 +26,7 @@ $(function () {
             },
             error: function() {
                 //请求出错处理
-                alert("出错啦");
+                alert("请求出错了呢");
             }
         });
 
@@ -42,7 +38,7 @@ $(function () {
                 url: "getAllRole",    //请求的url地址 
                 dataType: "json",   //返回格式为json
                 async: true, //请求是否异步，默认为异步，这也是ajax重要特性
-                data: { "currentPage": obj.curr ,"pageSize":10},    //参数值 可能不用
+                data: { "currentPage": obj.curr ,"pageSize":10},    //参数值可能不用
                 type: "POST",   //请求方式
                 success: function(data) {
                     //请求成功时处理
@@ -63,8 +59,6 @@ $(function () {
             //增加角色按钮
             var $my_add = $('.my-add');
             $my_add.on('click',roleAdd);
-            // {"pageSize":10,"currentPage":1,"totalRecord":2,"totalPage":1,"dataList":[{"id":1,"rolename":"admin","state":1},{"id":2,"rolename":"xuesheng","state":1}]}
-
             var $tbody = $('.iframe-content .layui-table tbody');
             $tbody.html("");
             var my_length = data.length;
@@ -72,14 +66,11 @@ $(function () {
                 var $tr = $('<tr></tr>');
                 $tr.data('ids',element.id)
                 $tr.append("<td class='rolename' style='width: 110px;'>"+element.rolename+"</td>");
-                // $tr.append("<td class='user-nowHas'  style='width: 10em'>"+element.nowHas+"</td>");
-                // $tr.append("<td>"+element.nowNothas+"</td>");
                 $tr.append($operation);
                 $tbody.append($tr);
 
                 /*每个编辑按钮的注册事件*/
                 var $my_edits = $('.my-edit i');
-                /* alert($my_edits.length);*/
                 if($my_edits.length==my_length){
                     $my_edits.on('click',roleEdit)
                 }
@@ -92,7 +83,7 @@ $(function () {
             })
         }
 
-        // 修改用户处理函数，点击编辑图标的时候触发
+        // 修改角色处理函数，点击编辑图标的时候触发
         function roleEdit() {
             var id = $(this).parents('tr').data('ids');
             var rolename = $(this).parents('tr').children(".rolename").text();
@@ -123,46 +114,43 @@ $(function () {
                             $("#layui-layer-iframe1").contents().find("div input.rolename").val(rolename);
                             
 
-                            for(var i=0;i<data.length;i++){
+                            for(var i=0;i<data.havedPermissionList.length;i++){
                                 var option = document.createElement('option');
-                                option.value = data[i].id;
-                                option.innerHTML = data[i].description;
-                                var select1 = $("#layui-layer-iframe1").contents().find("#select1");
-                                select1.append(option);
+                                option.value = data.havedPermissionList[i].id;
+                                option.innerHTML = data.havedPermissionList[i].description;
+                                var select2 = $("#layui-layer-iframe1").contents().find("#select2");
+                                select2.append(option);
                             }
 
 
-                            // for(var i=0;i<data.nowNothas.length;i++){
-                            //     var option = document.createElement('option');
-                            //     option.value = data.nowNothas[i];
-                            //     option.innerHTML = data.nowNothas[i];
-                            //     var select2 = $("#layui-layer-iframe1").contents().find("#select2");
-                            //     select2.append(option);
-                            // }
+                            for(var i=0;i<data.unHavedPermissionList.length;i++){
+                                var option = document.createElement('option');
+                                option.value = data.unHavedPermissionList[i];
+                                option.innerHTML = data.unHavedPermissionList[i];
+                                var select1 = $("#layui-layer-iframe1").contents().find("#select1");
+                                select1.append(option);
+                            }
                                                         
                             //提交之后的处理
                             $("#layui-layer-iframe1").contents().find("#roleInfo").on('submit',function (e) {
-
                             // 使用map()函数把每个option的值传递到当前匹配集合，生成包含返回值的对象；
                             // 使用 get() 处理返回的对象以得到基础的数组；
                             // 使用join()函数组装字符串。
-                            	console.log("aafff");
-                            var permissionListStr = $("#layui-layer-iframe1").contents().find("#select1 option").map(function(){return $(this).val();}).get().join(",");
+                            var permissionListStr = $("#layui-layer-iframe1").contents().find("#select2 option").map(function(){return $(this).val();}).get().join(",");
                             var permissionList = permissionListStr.split(",");// 在每个逗号(,)处进行分解。
-                            // console.log(permissionList instanceof Array);
                             console.log(rolename);
                             console.log(permissionList);
-                           console.log(permissionList instanceof Array);
+                            console.log(permissionList instanceof Array);
                                 //把投稿数据传到后台
                                 $.ajax({
-                                    url: "/updateRolePermission",    //请求的url地址
+                                    url: "updateRolePermission",    //请求的url地址
                                     dataType: "json",   //返回格式为json
                                     async: true, //请求是否异步，默认为异步，这也是ajax重要特性
                                     data :{"rolename":rolename,"permissionList":permissionList},
                                     type: "POST",   //请求方式
                                     success: function(data) {
                                         //请求成功时处理
-                                        layer.alert("添加成功", {icon: 6},function () {
+                                        layer.alert("修改成功", {icon: 6},function () {
                                             // 获得frame索引
                                             layer.closeAll('iframe');
                                         });
@@ -177,16 +165,14 @@ $(function () {
                          },
                         error: function(data) {
                             //请求出错处理
-                             alert("请求出错啦");
+                            alert("请求出错了呢");
                         }
-                    
                     });
                 }
             });
         }
 
-
-        //增加用户信息函数
+        //增加角色信息函数
            function roleAdd() {
             var id = $(this).parents('tr').data('ids');
             layer.open({
@@ -219,14 +205,10 @@ $(function () {
                                 select1.append(option);
                             }
 
-
-
-
                              $("#layui-layer-iframe1").contents().find("#roleInfo").on('submit',function (e) {
                                 //把投稿数据传到后台
-
-                                var permissionListStr = $("#layui-layer-iframe1").contents().find("#select1 option").map(function(){return $(this).val();}).get().join(",");
-                                var permissionList = permissionListStr.split(",");// 在每个逗号(,)处进行分解。
+                                var permissionListStr = $("#layui-layer-iframe1").contents().find("#select2 option").map(function(){return $(this).val();}).get().join(",");
+                                var permissionList = permissionListStr.split(",");// 在每个逗号(,)处进行分解
                                 var rolename = $("#layui-layer-iframe1").contents().find("#roleInfo .rolename").val();
 
                                 console.log(rolename);
@@ -240,16 +222,14 @@ $(function () {
                                     type: "POST",   //请求方式
                                     success: function(data) {
                                         //请求成功时处理
-                                        layer.alert("通过投稿成功", {icon: 6},function () {
-                                            // 获得frame索引
+                                        layer.alert("添加角色成功", {icon: 6},function () {
                                             //关闭当前frame
                                             layer.closeAll('iframe');
                                         });
                                     },
                                     error: function() {
                                         //请求出错处理
-                                        /*alert('获取总页数失败');*/
-                                        
+
                                     }
                                 });
                                 return false;
@@ -257,7 +237,6 @@ $(function () {
                         },
                         error: function() {
                             //请求出错处理  
-
                         }
                     });
                 }
@@ -270,16 +249,15 @@ $(function () {
             layer.confirm('确认要删除吗？',function(index){
                 //捉到被选中的，发异步进行删除
                 $.ajax({
-                    url: "",    //请求的url地址
+                    url: "deleteRole",    //请求的url地址
                     dataType: "json",   //返回格式为json
                     async: true, //请求是否异步，默认为异步，这也是ajax重要特性
                     data: { "id": id },    //参数值 可能不用
                     type: "POST",   //请求方式
                     success: function(data) {
                         //请求成功时处理
-                        /*弹出删除投稿成功并刷新页面*/
                         layer.msg('删除成功', {icon: 1});
-                        console.log('删除的文章id:'+id)
+                        console.log('删除的角色id:'+id)
                         window.location.reload();
                     },
                     error: function() {

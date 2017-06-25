@@ -1,6 +1,4 @@
-/**
- * Created by guiliang on 2017/6/14 0014.
- */
+
 $(function () {
     layui.use(['laypage','layer','form'], function() {
         var laypage = layui.laypage;
@@ -123,6 +121,8 @@ $(function () {
 
 
                             $("#layui-layer-iframe1").contents().find("div #schPreview").attr("src",data.pic);
+
+                            $("#layui-layer-iframe1").contents().find("div #schPreview").css("width","100px");
 
                             // 请求省份
                             $.ajax({

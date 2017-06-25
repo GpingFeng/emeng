@@ -1,6 +1,4 @@
-/**
- * Created by guiliang on 2017/6/14 0014.
- */
+
 $(function () {
     layui.use(['laypage','layer','form'], function() {
         var laypage = layui.laypage;
@@ -18,7 +16,6 @@ $(function () {
                 //请求成功处理
                 var adverL = data.dataList.length;
                 console.log("总共页数"+adverL);
-                
                 pages = adverL%10==0?adverL/10:(adverL/10+1);
                 laypage({
                     cont: 'page'
@@ -126,6 +123,10 @@ $(function () {
                             $("#layui-layer-iframe1").contents().find("div textarea.teaIntro").val(data.introduction);
                             $("#layui-layer-iframe1").contents().find("div #teaPreview").attr("src",data.pic);
 
+                            $("#layui-layer-iframe1").contents().find("div #teaPreview").css("width","100px");
+
+                            var schoolSelectId = data.schoolId;
+
                             // 请求学校
                             $.ajax({
                                 url: "getSchools",    //请求的url地址
@@ -138,13 +139,16 @@ $(function () {
                                     $.each(data,function(i,n){
                                     $("#layui-layer-iframe1").contents().find("#schoolSelect").append('<option value='+n.id+'>'+n.name+'</option>');
                                 });
+                                     //设置默认的所属学校
+                                    //选择value值等于默认的学校的ID的option
+                                    $("select option[value='"+schoolSelectId+"']").attr("select","selected"); //如果值一样 就选中对应的option,
                             },
                                 error:function(){
 
                                 }
                             });
 
-
+                           
                             //提交之后的处理
                             $("#layui-layer-iframe1").contents().find("#teaInfo").on('submit',function (e) {
                                 //取得修改后的值
@@ -167,12 +171,12 @@ $(function () {
                                     dataType: "json",  //返回格式为json
                                     async: true, //请求是否异步，默认为异步，这也是ajax重要特性
                                     // "id":1,"name":"ye","direction":"软件","subject":"奥数","pic":"1234.jpg","schoolId":0,"introduction":null
-                                    data :{"id":id,"name":teaName,"direction":teaDirection,"subject":teaSubject},
+                                    data :{"id":id,"name":teaName,"direction":teaDirection,"subject":teaSubject,"introduction":teaIntro,"pic":teaPreview,"schoolId":afterSchoolId},
                                     type: "POST",   //请求方式
                                     success: function() {
                                         // layer.close(layer.index);//先关闭当前窗口
                                         //请求成功处理
-                                        layer.alert("添加成功", {icon: 6},function(index){
+                                        layer.alert("修改成功", {icon: 6},function(index){
                                             layer.closeAll();
                                         });
                                     },
@@ -251,7 +255,7 @@ $(function () {
                                     dataType: "json",  //返回格式为json
                                     async: true, //请求是否异步，默认为异步，这也是ajax重要特性
                                     // {"id":30,"name":"30","pic":"30","link":"30","lesson":0,"chapter":0}
-                                    data :{"name":teaName,"direction":teaDirection,"subject":teaSubject,},
+                                    data :{"name":teaName,"direction":teaDirection,"subject":teaSubject,"introduction":teaIntro,"pic":teaPreview,"schoolId":afterSchoolId},
                                     type: "POST",   //请求方式
                                     success: function() {
                                         // layer.close(layer.index);//先关闭当前窗口

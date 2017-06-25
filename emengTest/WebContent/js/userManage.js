@@ -1,6 +1,4 @@
-/**
- * Created by guiliang on 2017/6/14 0014.
- */
+
 $(function () {
     layui.use(['laypage','layer','form'], function() {
         var laypage = layui.laypage;
@@ -79,8 +77,7 @@ $(function () {
                     $tr.append("<td>"+user.schoolId+"</td>");
                     $tr.append("<td>"+user.phone+"</td>");
                     $tr.append($operation);
-                    $tbody.append($tr);
-                               
+                    $tbody.append($tr);           
             }
             // 每个编辑按钮的注册事件
             var $my_delete = $('.my-delete');
@@ -89,9 +86,6 @@ $(function () {
             var $my_edits = $('.my-edit i');
             $my_edits.on('click',userEdit);
         }
-
-
-
 
         // 编辑用户处理函数，点击编辑图标的时候触发
         function userEdit() {
@@ -119,22 +113,12 @@ $(function () {
                         success: function(data) {
                             //请求成功处理
                             //插入数据
-                            // [{"user":{"id":1,"username":"admin","jobId":"admin","password":"admin","schoolId":0,"phone":"111","mail":"","state":1},"role":{"id":1,"rolename":"admin","state":1},"school":null},{"user":{"id":2,"username":"111","jobId":"111","password":"111","schoolId":0,"phone":"111","mail":"","state":1},"role":{"id":1,"rolename":"admin","state":1},"school":null}]
-                            // $("#layui-layer-iframe1").contents().find("div input.id").val(data.userList[id-1].user.id);
-                            // alert(data[0].user.username);
                             $("#layui-layer-iframe1").contents().find("div input.username").val(data.user.username);
                             $("#layui-layer-iframe1").contents().find("div input.job_id").val(data.user.jobId);
                             $("#layui-layer-iframe1").contents().find("div input.password").val(data.user.password);
-                            // $("#layui-layer-iframe1").contents().find("div option.school_id").val(data.user.schoolId);
-                            // $("#layui-layer-iframe1").contents().find("#schoolSelect").append('<option>'+data.school+'</option>');
-                             // $("#select_id").append("<option value='Value'>Text</option>");  //添加一项option
                             $("#layui-layer-iframe1").contents().find("div input.phone").val(data.user.phone);
                             $("#layui-layer-iframe1").contents().find("div input.mail").val(data.user.mail);
-                            // $("#layui-layer-iframe1").contents().find("div option.role").val(data[0].role.rolename);
 
-                            // $("#layui-layer-iframe1").contents().find("#roleSelect").append('<option>'+data[0].role.rolename+'</option>');
-
-                            //{"userList":[{"user":{"jobId":"admin","password":"admin","mail":"","phone":"111","schoolId":0,"id":1,"state":1,"username":"admin"},"role":{"rolename":"admin","id":1,"state":1}},{"user":{"jobId":"111","password":"111","mail":"","phone":"111","schoolId":0,"id":2,"state":1,"username":"111"},"role":{"rolename":"admin","id":1,"state":1}}]} 
                             //请求所属学校还有所属角色，然后将它们查到下拉框后面
                             $.ajax({
                                 url: "getSchools",    //请求的url地址
@@ -175,7 +159,6 @@ $(function () {
 
                             //提交之后的处理
                             $("#layui-layer-iframe1").contents().find("#userInfoform").on('submit',function (e) {
-                            
                             //取得修改后的值
                             var afterUsername = $("#layui-layer-iframe1").contents().find("div input.username").val();
                             var afterJob_id = $("#layui-layer-iframe1").contents().find("div input.job_id").val();
@@ -192,7 +175,6 @@ $(function () {
                                 console.log("修改后Phone"+afterPhone);
                                 console.log("修改后Mail"+afterMail);
                                 console.log("修改后RoleId"+afterRoleId);
-                                // var afterRole = $("#layui-layer-iframe1").contents().find("#schoolSelect").find("option:selected").val();
                                 //把投稿数据传到后台
                                 $.ajax({
                                     url: "updateByPrimaryKey",    //请求的url地址
@@ -202,7 +184,7 @@ $(function () {
                                     type: "POST",   //请求方式
                                     success: function() {
                                         //请求成功处理
-                                        layer.alert("添加成功", {icon: 6},function () {
+                                        layer.alert("修改成功", {icon: 6},function () {
                                             // 获得frame索引
                                             layer.closeAll('iframe');
                                         });
@@ -214,7 +196,6 @@ $(function () {
                                 });
                                 return false;
                             })
-
                         },
                         error: function(data) {
                             //请求失败时处理
@@ -263,7 +244,6 @@ $(function () {
                                         }
                                     });
 
-
                                         //{"pageSize":10,"currentPage":1,"totalRecord":1,"totalPage":1,"dataList":[{"id":1,"rolename":"admin","state":1}]}
                                         $.ajax({
                                             url: "getAllRole",    //请求的url地址
@@ -275,7 +255,6 @@ $(function () {
                                                 roleSelect = $("#layui-layer-iframe1").contents().find("#roleSelect");
                                                 console.log(data);
                                                 $.each(data,function(i,n){
-                                                // option = document.createElementById ("option");
                                                 $("#layui-layer-iframe1").contents().find("#roleSelect").append('<option value='+n.id+'>'+n.rolename+'</option>');
                                             });
                                         },
@@ -308,21 +287,18 @@ $(function () {
                                                 url: "addUser",    //请求的url地址
                                                 dataType: "json",   //返回格式为json
                                                 async: true, //请求是否异步，默认为异步，这也是ajax重要特性
-                                                data: {"username":afterUsername,"jobId":afterJob_id,"password":afterPassword,"school":afterSchoolId,"phone":afterPhone,"mail":afterMail,"roleId":afterRoleId},    //参数值 可能不用
+                                                data: {"username":afterUsername,"jobId":afterJob_id,"password":afterPassword,"schoolId":afterSchoolId,"phone":afterPhone,"mail":afterMail,"roleId":afterRoleId},    //参数值 可能不用
                                                 type: "POST",   //请求方式
                                                 success: function(data) {
                                                     //请求成功时处理
-                                                	layer.alert("通过投稿成功", {icon: 6},function () {
-                                                        // 获得frame索引
+                                                	layer.alert("添加成功", {icon: 6},function () {
                                                         //关闭当前frame
                                                         layer.closeAll('iframe');
                                                     });
                                                 },
                                                 error: function() {
                                                     //请求出错处理
-                                                    /*alert('获取总页数失败');*/
                                                     alert("请求失败");
-                                                    // alert(afterUsername);
                                                 }
                                             });
                                             return false;
@@ -344,14 +320,14 @@ $(function () {
                     data: { "id": id },    //参数值 可能不用
                     type: "POST",   //请求方式
                     success: function() {
-                        //请求出错处理
+                        //请求成功时处理
                         /*弹出删除投稿成功并刷新页面*/
                         layer.alert('删除成功', {icon: 1});
                         console.log('删除的文章id:'+id);
                         window.location.reload();
                     },
                     error: function(data) {
-                        //请求成功时处理
+                        //请求出错处理
                         pages = data.nums;
                     }
                 });
