@@ -39,7 +39,7 @@ public class VideoServiceImpl implements VideoService {
 		// TODO Auto-generated method stub
 		return videoMapper.selectByPrimaryKey(id);
 	}
-
+                                             
 	//选择性字段更新
 	@Override
 	public int updateByPrimaryKeySelective(Video record) {
@@ -57,7 +57,7 @@ public class VideoServiceImpl implements VideoService {
 	//根据课程id查找
 	public List<Video> selectBylesson(Integer lesson) {
 		// TODO Auto-generated method stub
-		return videoMapper.selectBylesson(lesson);
+		return videoMapper.selectBylesson(lesson); 
 	}
 
 	//根据章节id查找

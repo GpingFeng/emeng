@@ -26,7 +26,6 @@ public class BannerController {
 	@RequestMapping("/getAllBanner")
 	@MappingDescription("查看所有的轮播文章")
 	public List<PassageWithBanner> getAllBanner() {
-		System.out.println("getAllBanner");
 		return bannerService.selectAll();
 	}
 
@@ -34,13 +33,13 @@ public class BannerController {
 	@ResponseBody
 	@MappingDescription("增加轮播")
 	public String addBanner(Banner banner) {
-		if (bannerService.selectAll().size() < 5) {
+		if (bannerService.selectByPassageId(banner.getPassageId()) == null && bannerService.selectAll().size() < 4) {
 			if (bannerService.insert(banner) != 0)
-				return FAIL;
-			else
 				return SUCCESS;
+			else
+				return FAIL;
 		} else {
-			return "轮播数量已满，请先移除已有轮播";
+			return "轮播数量或该文章已被设置为轮播已满，请先移除已有轮播";
 		}
 
 	}

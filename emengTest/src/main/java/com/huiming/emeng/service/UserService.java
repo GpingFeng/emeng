@@ -22,7 +22,7 @@ public interface UserService {
 	public User selectSelective(User user);
 	
 	/**
-	 * 获取所有有效用户
+	 * 分页获取所有有效用户
 	 * @return
 	 */
 	public Pager<User> selectAllUser(Integer fromIndex, Integer pageSize);
@@ -67,6 +67,28 @@ public interface UserService {
 	 */
 	public int updateUserRole(Integer roleId,Integer userId);
 
+	/**
+	 * 添加用户角色
+	 * @param roleId
+	 * @param userId
+	 * @return
+	 */
 	int insertUserRole(Integer roleId, Integer userId);
+	
+	/**
+	 * 根据id查找用户
+	 * @param user
+	 * @return
+	 */
+	public User selectByPrimaryKey(User user);
+	
+	
+	/**
+	 * 判断是否存在工号用户
+	 * 存在-false,不存在-true
+	 * @param jobId
+	 * @return
+	 */
+	public Boolean selectByJobId(String jobId);
 
 }

@@ -105,9 +105,7 @@
     FROM passage psg
     <where>
     <if test="lessonId != null and chapterId != null and passageType != null and fromIndex != null and pageSize != null">
-      (psg.state = 1
-      OR psg.state = 2)
-      AND psg.lesson = #{lessonId}
+      psg.lesson = #{lessonId}
       AND psg.chapter = #{chapterId}
       AND psg.type = #{passageType}
       limit #{fromIndex},#{pageSize}
@@ -135,7 +133,8 @@
   FROM passage psg
   <where>
     <if test="title != null">
-      titile LIKE concat(concat('%',#{title}),'%')
+      (titile LIKE concat(concat('%',#{title}),'%') OR author LIKE concat(concat('%',#{title}),'%'))
+      AND psg.type &gt; 0 AND (psg.type &gt;= 25 OR psg.type &lt;= 12)
     </if>
   </where>
     ORDER BY publish_time DESC
@@ -143,10 +142,11 @@
   </select>
   <select id="selectCountByTitle" parameterType="String" resultType="java.lang.Integer">
     SELECT count(*)
-    FROM passage
+    FROM passage psg
     <where>
       <if test="title != null">
-        titile LIKE concat(concat('%',#{title}),'%')
+        (titile LIKE concat(concat('%',#{title}),'%') OR author LIKE concat(concat('%',#{title}),'%'))
+        AND psg.type &gt; 0 AND (psg.type &gt;= 25 OR psg.type &lt;= 12)
       </if>
     </where>
   </select>

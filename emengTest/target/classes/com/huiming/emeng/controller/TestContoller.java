@@ -1,7 +1,8 @@
 package com.huiming.emeng.controller;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.huiming.emeng.model.Navigation;
+import com.huiming.emeng.service.NavigationService;
+import com.mysql.fabric.xmlrpc.base.Array;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -12,14 +13,15 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.huiming.emeng.common.CustomException;
 import com.huiming.emeng.common.CustomException.UnauthorizedError;
 import com.huiming.emeng.mapper.LessonMapper;
-import com.huiming.emeng.model.Navigation;
-import com.huiming.emeng.service.NavigationService;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * ²âÊÔ
+ * æµ‹è¯•
  * 
  * @author Jack
- * @date 2017Äê5ÔÂ15ÈÕ
+ * @date 2017å¹´5æœˆ15æ—¥
  */
 @Controller
 public class TestContoller {
@@ -31,7 +33,7 @@ public class TestContoller {
 	private NavigationService navigationService;
 	
 	/**
-	 * ²âÊÔÊı¾İ¿âÁ¬½ÓÇé¿ö
+	 * æµ‹è¯•æ•°æ®åº“è¿æ¥æƒ…å†µ
 	 * @return
 	 */
 	@RequestMapping("/test")
@@ -53,11 +55,11 @@ public class TestContoller {
 	
 	
 	/**
-	 * ²âÊÔ×Ô¶¨ÒåÒì³£
+	 * æµ‹è¯•è‡ªå®šä¹‰å¼‚å¸¸
 	 */
 	@RequestMapping("testException")
 	public String testException() {
-		throw CustomException.genException(UnauthorizedError.class, "´íÎóÏûÏ¢");
+		throw CustomException.genException(UnauthorizedError.class, "é”™è¯¯æ¶ˆæ¯");
 	}
 	
 	@RequestMapping("/test1")
@@ -66,9 +68,4 @@ public class TestContoller {
 		return "fileupload";
 	}
 	
-	
-	@RequestMapping("/manageEmeng")
-	public String manageEmeng() {
-		return "indexEM";
-	}
 }

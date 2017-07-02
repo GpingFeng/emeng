@@ -52,7 +52,7 @@ public class FileuploadServiceImpl {
 					   
 					   files[i].transferTo(new File(path+File.separator+str));
 					   System.out.println(str);
-					   respondate.add(i, "http://localhost:8080/eneng/wangEditor_images/"+str);
+					   respondate.add(i, "http://localhost:8080/emeng/wangEditor_images/"+str);
 				   }
 			   }
 		   }
