@@ -62,7 +62,7 @@ $(function () {
         function ajaxPageContent(data) {
             //渲染函数（其实应该在success里面）
 
-            var $operation = '<td class="td-manage"><a title="编辑" href="javascript:;" class="my-edit" style="text-decoration:none"><i class="layui-icon" style="margin:0 20px;">&#xe642;</i></a><a title="删除" href="javascript:;"  class="my-delete" style="text-decoration:none"><i class="layui-icon" >&#xe640;</i></a></td>';
+            var $operation = '<td class="td-manage"><a title="编辑" href="javascript:;" class="my-edit" style="text-decoration:none"><i class="layui-icon" >&#xe642;</i></a><a title="删除" href="javascript:;"  class="my-delete" style="text-decoration:none"><i class="layui-icon" >&#xe640;</i></a></td>';
             //渲染数据   
             var $tbody = $('.iframe-content .layui-table tbody');
             $tbody.html("");
@@ -71,7 +71,7 @@ $(function () {
                 var $tr = $('<tr></tr>');
                 $tr.data('ids',element.id);//注意这一行，为下面是传ID，向元素附加数据，然后取回该数据
                 $tr.append("<td class='user-name' >"+element.slogan+"</td>");
-                $tr.append("<td class='user-link'>"+element.link+"</td>");
+                $tr.append("<td class='user-link limit'>"+element.link+"</td>");
                 $tr.append($operation);
                 $tbody.append($tr);
 

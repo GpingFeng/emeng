@@ -40,7 +40,7 @@ $(function () {
                 url: "getSchoolPage",    //请求的url地址
                 dataType: "json",   //返回格式为json
                 async: true, //请求是否异步，默认为异步，这也是ajax重要特性
-                data: {"currentPage": 1 ,"pageSize":10},    //参数值
+                data: {"currentPage": obj.curr ,"pageSize":10},    //参数值
                 type: "POST",   //请求方式
                 success: function(data) {
                     //请求成功时处理
@@ -58,7 +58,7 @@ $(function () {
         //ajax请求高校页函数
         function ajaxPageContent(data) {
             //渲染函数（其实应该在success里面）
-            var $operation = '<td class="td-manage"><a title="编辑" href="javascript:;" class="my-edit" style="text-decoration:none"><i class="layui-icon" style="margin:0 20px;">&#xe642;</i></a><a title="删除" href="javascript:;"  class="my-delete" style="text-decoration:none"><i class="layui-icon" >&#xe640;</i></a></td>';
+            var $operation = '<td class="td-manage"><a title="编辑" href="javascript:;" class="my-edit" style="text-decoration:none"><i class="layui-icon" >&#xe642;</i></a><a title="删除" href="javascript:;"  class="my-delete" style="text-decoration:none"><i class="layui-icon" >&#xe640;</i></a></td>';
             //渲染数据   
             var $tbody = $('.iframe-content .layui-table tbody');
             $tbody.html("");
@@ -67,8 +67,19 @@ $(function () {
             $.each(data.dataList,function (index,element) {
                 var $tr = $('<tr></tr>');
                 $tr.data('ids',element.school.id);//注意这一行，为下面是传ID，向元素附加数据，然后取回该数据
-                $tr.append("<td class='user-name' >"+element.school.name+"</td>");
-                $tr.append("<td class='address' >"+element.location.name+"</td>");
+                if(element.school==null){
+                	var schoolName = '';
+                }else{
+                	schoolName = element.school.name;
+                }
+                
+                if(element.location==null){
+                	var locationName = '';
+                }else{
+                	locationName = element.location.name;
+                }
+                $tr.append("<td class='user-name' >"+schoolName+"</td>");
+                $tr.append("<td class='address' >"+locationName+"</td>");
                 $tr.append($operation);
                 $tbody.append($tr);
 

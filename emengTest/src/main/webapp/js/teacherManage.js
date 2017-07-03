@@ -40,7 +40,7 @@ $(function () {
                 url: "teacher/getAllTeacherByPage",    //请求的url地址
                 dataType: "json",   //返回格式为json
                 async: true, //请求是否异步，默认为异步，这也是ajax重要特性
-                data: {"currentPage": 1 ,"pageSize":10,"type":0},    //参数值
+                data: {"currentPage": obj.curr ,"pageSize":10,"type":0},    //参数值
                 type: "POST",   //请求方式
                 success: function(data) {
                     //请求成功时处理
@@ -58,7 +58,7 @@ $(function () {
         //ajax请求名师页函数
         function ajaxPageContent(data) {
             //渲染函数（其实应该在success里面）
-            var $operation = '<td class="td-manage"><a title="编辑" href="javascript:;" class="my-edit" style="text-decoration:none"><i class="layui-icon" style="margin:0 20px;">&#xe642;</i></a><a title="删除" href="javascript:;"  class="my-delete" style="text-decoration:none"><i class="layui-icon" >&#xe640;</i></a></td>';
+            var $operation = '<td class="td-manage"><a title="编辑" href="javascript:;" class="my-edit" style="text-decoration:none"><i class="layui-icon">&#xe642;</i></a><a title="删除" href="javascript:;"  class="my-delete" style="text-decoration:none"><i class="layui-icon" >&#xe640;</i></a></td>';
             //渲染数据   
             var $tbody = $('.iframe-content .layui-table tbody');
             $tbody.html("");
@@ -73,7 +73,7 @@ $(function () {
                 $tr.append("<td class='user-link'>"+element.subject+"</td>");
                 $tr.append($operation);
                 $tbody.append($tr);
-
+                
                 /*每个编辑按钮的注册事件*/
                 var $my_edits = $('.my-edit i');
 
@@ -138,9 +138,9 @@ $(function () {
                                             schoolSelect = $("#layui-layer-iframe1").contents().find("#schoolSelect");
                                             $.each(data,function(i,n){
                                                 if(schoolSelectId==n.school.id){
-                                                $("#layui-layer-iframe1").contents().find("#schoolSelect").append('<option value='+n.school.id+' selected>'+n.school.name+'</option>');
+                                                	$("#layui-layer-iframe1").contents().find("#schoolSelect").append('<option value='+n.school.id+' selected>'+n.school.name+'</option>');
                                                 }else{
-                                                $("#layui-layer-iframe1").contents().find("#schoolSelect").append('<option value='+n.school.id+'>'+n.school.name+'</option>');
+                                                	$("#layui-layer-iframe1").contents().find("#schoolSelect").append('<option value='+n.school.id+'>'+n.school.name+'</option>');
                                                 }
                                         });
                                     },
@@ -246,8 +246,9 @@ $(function () {
                                 console.log(teaDirection);
                                 console.log(teaSubject);
                                 console.log(teaIntro);
-                                console.log(teaPreview);
                                 console.log(afterSchoolId);
+                                console.log(teaPreview);
+                                
 
                                 //把投稿数据传到后台
                                 $.ajax({

@@ -4,11 +4,10 @@ $(function () {
         var laypage = layui.laypage;
         var layer = layui.layer;
         var form = layui.form();
-        var nums = 10;  //一页10条
 
         //ajax获取总页数
         $.ajax({
-            url: 'getAllUser',//请求的url地址
+            url: 'getAllUnpassUser',//请求的url地址
             dataType: "json",   //返回格式为json
             async: true, //请求是否异步，默认为异步，这也是ajax重要特性
             data: {"currentPage":1,"pageSize":10},    //可以不用
@@ -37,7 +36,7 @@ $(function () {
             console.log('当前页:'+obj.curr);
             //ajax获取视频列表
             $.ajax({
-                url: "getAllUser",    //请求的url地址
+                url: "getAllUnpassUser",    //请求的url地址
                 dataType: "json",   //返回格式为json
                 async: true, //请求是否异步，默认为异步，这也是ajax重要特性
                 data: { "currentPage":obj.curr,"pageSize":10},    //参数值
@@ -57,7 +56,7 @@ $(function () {
         function ajaxPageContent(data) {
 
             //渲染函数（其实应该在success里面）
-            var $operation = '<td class="td-manage"><a title="编辑" href="javascript:;" class="my-edit" style="text-decoration:none"><i class="layui-icon" style="margin:0 20px;">&#xe642;</i></a></td>';
+            var $operation = '<td class="td-manage"><a title="编辑" href="javascript:;" class="my-edit" style="text-decoration:none"><i class="layui-icon" style="margin:0 20px;">&#xe609;</i></a></td>';
             //渲染数据
             var $tbody = $('.iframe-content .layui-table tbody');
             $tbody.html("");
@@ -95,7 +94,7 @@ $(function () {
                 shadeClose: true,//是否点击遮罩关闭
                 shade:0.4,//遮罩
                 offset: '30px',//坐标
-                content: 'userEdit.html',//页面内容
+                content: 'userReviewEdit.html',//页面内容
                 end: function () {//层销毁后触发的回调
                     location.reload();
                 },//请求方式
@@ -109,6 +108,7 @@ $(function () {
                         success: function(data) {
                   
                             //请求成功处理
+                        	
                             //插入数据
                             var afterJob_id = $("#layui-layer-iframe1").contents().find("div input.job_id").val();
                             $("#layui-layer-iframe1").contents().find("div input.username").val(data.user.username);
@@ -116,9 +116,13 @@ $(function () {
                             $("#layui-layer-iframe1").contents().find("div input.password").val(data.user.password);
                             $("#layui-layer-iframe1").contents().find("div input.phone").val(data.user.phone);
                             $("#layui-layer-iframe1").contents().find("div input.mail").val(data.user.mail);
-                            
-                            //$("#layui-layer-iframe1").contents().find("#schoolSelect").append('<option value='+data.user.schoolId+'>'+data.user.school+'</option>');
-                            //schoolName = data.user.school;
+                          
+                            //设置不可编辑
+                            $("#layui-layer-iframe1").contents().find("div input.username").attr("disabled","disabled");
+                            $("#layui-layer-iframe1").contents().find("div input.password").attr("disabled","disabled");
+                            $("#layui-layer-iframe1").contents().find("div input.phone").attr("disabled","disabled");
+                            $("#layui-layer-iframe1").contents().find("div input.mail").attr("disabled","disabled");
+
                             schoolId = data.user.schoolId;
                             roleId = data.role.id;
                             console.log(roleId);
@@ -154,15 +158,15 @@ $(function () {
                                 data:{"currentPage":1,"pageSize":10},
                                 type: "POST",
                                 success:function(data){
-                                    roleSelect = $("#layui-layer-iframe1").contents().find("#roleSelect");
+                                    roleSelect1 = $("#layui-layer-iframe1").contents().find("#roleSelect1");
                                     console.log(data);
                                     $.each(data,function(i,n){
                                     // option = document.createElementById ("option");
                                     
                                     if(roleId==n.id){
-                                    	$("#layui-layer-iframe1").contents().find("#roleSelect").append('<option value='+n.id+' selected>'+n.rolename+'</option>');
+                                    	$("#layui-layer-iframe1").contents().find("#roleSelect1").append('<option value='+n.id+' selected>'+n.rolename+'</option>');
                                     }else{
-                                    	$("#layui-layer-iframe1").contents().find("#roleSelect").append('<option value='+n.id+'>'+n.rolename+'</option>');
+                                    	$("#layui-layer-iframe1").contents().find("#roleSelect1").append('<option value='+n.id+'>'+n.rolename+'</option>');
                                     }
                                 });
                             },
@@ -170,35 +174,33 @@ $(function () {
 
                                 }
                             });
-
+                            
+                            
                             //提交之后的处理
                             $("#layui-layer-iframe1").contents().find("#userInfoform").on('submit',function (e) {
                             //取得修改后的值
-                            var afterUsername = $("#layui-layer-iframe1").contents().find("div input.username").val();
+                            $("#layui-layer-iframe1").contents().find("#schoolSelect").find("option:selected").val();
                             
-                            var afterPassword = $("#layui-layer-iframe1").contents().find("div input.password").val();
-                            var afterSchoolId = $("#layui-layer-iframe1").contents().find("#schoolSelect").find("option:selected").val();
-                            var afterPhone = $("#layui-layer-iframe1").contents().find("div input.phone").val();
-                            var afterMail = $("#layui-layer-iframe1").contents().find("div input.mail").val();
-                            var afterRoleId = $("#layui-layer-iframe1").contents().find("#roleSelect").find("option:selected").val();
+                            var afterRoleId = $("#layui-layer-iframe1").contents().find("#roleSelect1").find("option:selected").val();
 
-                                console.log("修改后名字"+afterUsername);
+                                /*console.log("修改后名字"+afterUsername);
                                 console.log("修改后Job_id"+afterJob_id);
                                 console.log("修改后Password"+afterPassword);
                                 console.log("修改后SchoolId"+afterSchoolId);
                                 console.log("修改后Phone"+afterPhone);
-                                console.log("修改后Mail"+afterMail);
+                                console.log("修改后Mail"+afterMail);*/
+                            	console.log("id是："+id);
                                 console.log("修改后RoleId"+afterRoleId);
                                 //把投稿数据传到后台
                                 $.ajax({
-                                    url: "updateByPrimaryKey",    //请求的url地址
+                                    url: "passUserRegister",    //请求的url地址
                                     dataType: "json",   //返回格式为json
                                     async: true, //请求是否异步，默认为异步，这也是ajax重要特性
-                                    data :{"id":id,"username":afterUsername,"jobId":afterJob_id,"password":afterPassword,"schoolId":afterSchoolId,"phone":afterPhone,"mail":afterMail,"roleId":afterRoleId},
+                                    data :{"id":id,"roleId":afterRoleId},
                                     type: "POST",   //请求方式
                                     success: function() {
                                         //请求成功处理
-                                        layer.alert("修改成功", {icon: 6},function () {
+                                        layer.alert("审核通过", {icon: 6},function () {
                                             // 获得frame索引
                                             layer.closeAll('iframe');
                                         });

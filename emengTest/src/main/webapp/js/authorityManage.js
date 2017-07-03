@@ -14,7 +14,8 @@ $(function () {
             type: "POST",   //请求方式
             success: function(data) {
                 //请求成功时处理
-                pages = data.length%10==0?data.length/10:(data.length/10+1);
+                pages = data.totalPage%10==0?data.totalPage/10:(data.totalPage/10+1);
+                console.log("总页数："+pages);
                 laypage({
                     cont: 'page'
                     ,pages:pages //得到总页数
@@ -58,9 +59,9 @@ $(function () {
             $.each(data.dataList,function (index,element) {
                 var $tr = $('<tr></tr>');
                 $tr.data('ids',element.id)
-                $tr.append("<td class='mapping' style='width: 110px;'>"+element.mapping+"</td>");
-                $tr.append("<td class='description'  style='width: 10em'>"+element.description+"</td>");
-                $tr.append("<td class='function'>"+element.function+"</td>");
+                $tr.append("<td class='mapping limit' style='width: 110px;'>"+element.mapping+"</td>");
+                $tr.append("<td class='description limit'  style='width: 10em'>"+element.description+"</td>");
+                $tr.append("<td class='function limit'>"+element.function+"</td>");
                 $tr.append($operation);
                 $tbody.append($tr);
                 /*每个编辑按钮的注册事件*/
